@@ -232,12 +232,6 @@ def tick():
         g2d.draw_image_clip(sprites, rover.drop_symbol(), rover.position())
         rover.drop()
         rover.position()
-        if ask:
-            online=g2d.confirm("Would you like view your score to the global online ranking?")
-            if online:
-                url="http://kekko01.altervista.org/projects/moonpatrol_scores.php"
-                webbrowser.open(url)
-            ask=False
         if multiplayer:
             g2d.draw_image_clip(sprites, rover1.drop_symbol(), rover1.position())
             rover1.drop()
@@ -247,9 +241,16 @@ def tick():
                 target.write(str(score))
             online=g2d.confirm("Would you like to update and view your score to the global online ranking?")
             if online:
-                url="http://kekko01.altervista.org/projects/moonpatrol_scores.php?nick="+str(nick)+"&score="+str(score)
+                url="http://kekko01files.altervista.org/projects/moonpatrol_scores.php?nick="+str(nick)+"&score="+str(score)
                 webbrowser.open(url)
             writing=True
+        else:
+            if ask:
+                online=g2d.confirm("Would you like view your score to the global online ranking?")
+                if online:
+                    url="http://kekko01files.altervista.org/projects/moonpatrol_scores.php"
+                    webbrowser.open(url)
+                ask=False
     g2d.draw_text("Highscore:", (20, 20), 30)
     g2d.draw_text(highscore, (170, 10), 40)
     g2d.draw_text("Score:", (330, 20), 30)
