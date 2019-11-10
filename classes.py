@@ -148,7 +148,7 @@ class Hole(Arena):
 class Hill(Arena):
     """docstring for Hill."""
 
-    def __init__(self, arena, image, dimension,life):
+    def __init__(self, arena, image, dimension, life):
         self._w,self._h=dimension
         self._x,self._y=480,305-self._h
         self._image_x,self._image_y=image
@@ -210,7 +210,7 @@ class Alien(Arena):
     def collide(self,other):
         x,y,w,h=other.position()
         if isinstance(other,Bullet):
-            if y + h >= self._y and self._x <= x + w and x< self._x + self._w:
+            if y + h <= self._y and self._x <= x <= self._x + self._w:
                 return True
             else:
                 return False
@@ -225,7 +225,7 @@ class Alien(Arena):
         return self._y+self._h
 
     def delete(self):
-        self._x=-100
+        self._x=-1000
 
 
 class AlienBullet(Arena):

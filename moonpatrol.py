@@ -5,10 +5,12 @@
 @license This software is free - http://www.gnu.org/licenses/gpl.html
 '''
 
-import g2d, random
+import g2d as g2d, random, webbrowser
 from classes import Arena, Rover, Background, Hole, Hill, Bullet, Alien, AlienBullet, Robot, RobotBullet
 
-arena = Arena((480, 360))
+arena_w = 480
+arena_h = 360
+arena = Arena((arena_w, arena_h))
 #b1 = Ball(arena, (40, 80))
 #b2 = Ball(arena, (80, 40))
 #g = Ghost(arena, (120, 80))
@@ -29,12 +31,21 @@ game=True
 writing=False
 with open("assets/score","r") as target:
     highscore=target.read()
+    highscore=highscore.strip()
+with open("assets/nick","r") as target:
+    nick=target.read()
+    nick=nick.strip()
 score=0
 level=1
+difficulty=30
 def tick():
-    global spawntimer,game,score,writing,level,ask,multiplayer,rover,rover1
+    global spawntimer,game,score,writing,level,ask,multiplayer,rover,rover1,difficulty,nick
     if game:
         if not ask:
+            if nick=="null":
+                nick=g2d.prompt("Insert your Nickname")
+                with open("assets/nick","w") as target:
+                    target.write(nick)
             multiplayer=int(g2d.prompt("Multiplayer? (1=yes, 0 or other=no)"))
             if multiplayer!=1:
                 multiplayer=False
@@ -45,9 +56,10 @@ def tick():
                 rover1 = Rover(arena, (100, 300), 2)
             ask=True
         g2d.play_audio(sound,True)
-        if score % 20 == 0 and score!=0:
-            level = score // 20 + 1
+        if score % 13 == 0 and score!=0:
             score+=2
+            difficulty+=3
+            level+=1
         if g2d.key_pressed("ArrowUp"):
             rover.go_up()
         if g2d.key_pressed("ArrowRight"):
@@ -100,23 +112,23 @@ def tick():
 
         if spawntimer==0:
             if random.randint(0,20)==0:
-                holes.append(Hole(arena, (131,167), (480,300)))
-                spawntimer=120/level
+                holes.append(Hole(arena, (131,167), (arena_w,300)))
+                spawntimer=120
             elif random.randint(0,20)==0:
-                holes.append(Hole(arena, (159,167), (480,300)))
-                spawntimer=120/level
+                holes.append(Hole(arena, (159,167), (arena_w,300)))
+                spawntimer=120
             elif random.randint(0,20)==0:
                 hills.append(Hill(arena,(80,203),(13,16),1))
-                spawntimer=120/level
+                spawntimer=120
             elif random.randint(0,20)==0:
                 hills.append(Hill(arena,(112,199),(13,16),2))
-                spawntimer=120/level
+                spawntimer=120
             elif random.randint(0,10)==0:
                 aliens.append(Alien(arena))
-                spawntimer=120/level
+                spawntimer=120
             elif random.randint(0,10)==0:
                 robots.append(Robot(arena))
-                spawntimer=120/level
+                spawntimer=120
         if spawntimer>0:
             spawntimer-=1
 
@@ -152,7 +164,7 @@ def tick():
                         arena.remove(a)
                         score+=1
         for a in bullets:
-            if a.x_position()>480:
+            if a.x_position()>arena_w:
                 bullets.remove(a)
                 arena.remove(a)
             if a.y_position()<0:
@@ -220,6 +232,12 @@ def tick():
         g2d.draw_image_clip(sprites, rover.drop_symbol(), rover.position())
         rover.drop()
         rover.position()
+        if ask:
+            online=g2d.confirm("Would you like view your score to the global online ranking?")
+            if online:
+                url="http://kekko01.altervista.org/projects/moonpatrol_scores.php"
+                webbrowser.open(url)
+            ask=False
         if multiplayer:
             g2d.draw_image_clip(sprites, rover1.drop_symbol(), rover1.position())
             rover1.drop()
@@ -227,6 +245,10 @@ def tick():
         if not writing and score > int(highscore):
             with open("assets/score","w") as target:
                 target.write(str(score))
+            online=g2d.confirm("Would you like to update and view your score to the global online ranking?")
+            if online:
+                url="http://kekko01.altervista.org/projects/moonpatrol_scores.php?nick="+str(nick)+"&score="+str(score)
+                webbrowser.open(url)
             writing=True
     g2d.draw_text("Highscore:", (20, 20), 30)
     g2d.draw_text(highscore, (170, 10), 40)
@@ -237,6 +259,6 @@ def tick():
 
 def main():
     g2d.init_canvas(arena.size())
-    g2d.main_loop(tick)
+    g2d.main_loop(tick, difficulty)
 
 main()
