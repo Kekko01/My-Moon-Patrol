@@ -42,15 +42,15 @@ def tick():
     global spawntimer,game,score,writing,level,ask,multiplayer,rover,rover1,difficulty,nick
     if game:
         if not ask:
-            if nick=="null":
+            while nick=="null" or not nick:
                 nick=g2d.prompt("Insert your Nickname")
                 with open("assets/nick","w") as target:
                     target.write(nick)
-            multiplayer=int(g2d.prompt("Multiplayer? (1=yes, 0 or other=no)"))
-            if multiplayer!=1:
-                multiplayer=False
-            elif multiplayer==1:
-                multiplayer=True
+                with open("assets/nick","r") as target:
+                    nick=target.read()
+                    nick=nick.strip()
+
+            multiplayer=int(g2d.confirm("Multiplayer? (OK=yes, Cancel=no)"))
             rover = Rover(arena, (60, 300), 1)
             if multiplayer:
                 rover1 = Rover(arena, (100, 300), 2)
@@ -174,7 +174,7 @@ def tick():
             if a.x_position()<=0:
                 aliens.remove(a)
                 arena.remove(a)
-            if random.randint(0,60)==0:
+            if random.randint(0,120)==0:
                 aliensbullets.append(AlienBullet(arena, (a.x_position(),a.y_position())))
             for i in bullets:
                 if a.collide(i):
@@ -205,7 +205,7 @@ def tick():
                     game=False
         for a in aliensbullets:
             if a.y_position()>300:
-                if random.randint(0,3)==0:
+                if random.randint(0,5)==0:
                     holes.append(Hole(arena, (131,167), (a.x_position(),300)))
                     aliensbullets.remove(a)
                     arena.remove(a)

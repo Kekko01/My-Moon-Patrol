@@ -47,7 +47,7 @@ class Rover(Actor):
             self._dx+=3
 
     def go_up(self):
-        if self._y + self._h >= self._arena_h - self._plane:
+        if self._y + self._h >= self._arena_h - self._plane - 5:
             self._dx, self._dy = 0, -self._speed
 
     def go_down(self):
