@@ -14,6 +14,7 @@ arena = Arena((arena_w, arena_h))
 #b1 = Ball(arena, (40, 80))
 #b2 = Ball(arena, (80, 40))
 #g = Ghost(arena, (120, 80))
+version="1.8"
 ask=False
 sound=g2d.load_audio("assets/sound.mp3")
 sprites = g2d.load_image("assets/moon-patrol.png")
@@ -241,7 +242,7 @@ def tick():
                 target.write(str(score))
             online=g2d.confirm("Would you like to update and view your score to the global online ranking?")
             if online:
-                url="http://kekko01files.altervista.org/projects/moonpatrol_scores.php?nick="+str(nick)+"&score="+str(score)
+                url="http://kekko01files.altervista.org/projects/moonpatrol_scores.php?nick="+str(nick)+"&score="+str(score)+"&version="+version
                 webbrowser.open(url)
             writing=True
         else:
