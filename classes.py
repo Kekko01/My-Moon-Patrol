@@ -22,21 +22,21 @@ class Rover(Actor):
         arena.add(self)
 
     def move(self):
-        arena_w, arena_h = self._arena.size()
-        self._arena_h=arena_h
+        ARENA_W, ARENA_H = self._arena.size()
+        self._ARENA_H=ARENA_H
         self._dy+=self._gravity
         self._y += self._dy
         self._x += self._dx
         if self._y < 0:
             self._y = 0
-        elif self._y > arena_h - self._h-self._plane:
-            self._y = arena_h - self._h-self._plane
+        elif self._y > ARENA_H - self._h-self._plane:
+            self._y = ARENA_H - self._h-self._plane
 
 #        self._x += self._dx
 #        if self._x < 0:
 #            self._x = 0
-#        elif self._x > arena_w - self._w:
-#            self._x = arena_w - self._w
+#        elif self._x > ARENA_W - self._w:
+#            self._x = ARENA_W - self._w
 
     def go_left(self):
         if self._x>0:
@@ -47,7 +47,7 @@ class Rover(Actor):
             self._dx+=3
 
     def go_up(self):
-        if self._y + self._h >= self._arena_h - self._plane - 5:
+        if self._y + self._h >= self._ARENA_H - self._plane - 5:
             self._dx, self._dy = 0, -self._speed
 
     def go_down(self):
@@ -64,24 +64,24 @@ class Rover(Actor):
 
     def symbol(self):
         if self._player == 1:
-            if self._y + self._h <= self._arena_h - self._plane and self._dy < 0:
+            if self._y + self._h <= self._ARENA_H - self._plane and self._dy < 0:
                 return 49, 150, self._w, self._h
-            elif self._y + self._h <= self._arena_h - self._plane and self._dy > 0 and self._y + self._h != self._arena_h - self._plane:
+            elif self._y + self._h <= self._ARENA_H - self._plane and self._dy > 0 and self._y + self._h != self._ARENA_H - self._plane:
                 return 82 , 153 , self._w, self._h
             return 249, 158, self._w, self._h
         elif self._player == 2:
-            if self._y + self._h <= self._arena_h - self._plane and self._dy < 0:
+            if self._y + self._h <= self._ARENA_H - self._plane and self._dy < 0:
                 return 47, 103, self._w, self._h
-            elif self._y + self._h <= self._arena_h - self._plane and self._dy > 0 and self._y + self._h != self._arena_h - self._plane:
+            elif self._y + self._h <= self._ARENA_H - self._plane and self._dy > 0 and self._y + self._h != self._ARENA_H - self._plane:
                 return 80 , 104 , self._w, self._h
             return 212, 158, self._w, self._h
 
     def drop(self):
-        if self._y<self._arena_h:
+        if self._y<self._ARENA_H:
             self._dy+=self._gravity/2
             self._y += self._dy
 
-    def drop_symbol(arg):
+    def drop_symbol(self):
         return 167,100,41,34
 
     def x_position(self):

@@ -8,13 +8,13 @@
 import g2d as g2d, random, webbrowser
 from classes import Arena, Rover, Background, Hole, Hill, Bullet, Alien, AlienBullet, Robot, RobotBullet
 
-arena_w = 480
-arena_h = 360
-arena = Arena((arena_w, arena_h))
+ARENA_W = 480
+ARENA_H = 360
+arena = Arena((ARENA_W, ARENA_H))
 #b1 = Ball(arena, (40, 80))
 #b2 = Ball(arena, (80, 40))
 #g = Ghost(arena, (120, 80))
-version="1.8"
+version="1.9"
 ask=False
 sound=g2d.load_audio("assets/sound.mp3")
 sprites = g2d.load_image("assets/moon-patrol.png")
@@ -36,22 +36,33 @@ with open("assets/score","r") as target:
 with open("assets/nick","r") as target:
     nick=target.read()
     nick=nick.strip()
+with open("assets/lang/choice","r") as target:
+    for line in target:
+        langset = line.strip()
+message=[]
+with open("assets/lang/"+langset,"r") as target:
+    for text in target:
+        message.append(text.strip())
 score=0
 level=1
 difficulty=30
 def tick():
-    global spawntimer,game,score,writing,level,ask,multiplayer,rover,rover1,difficulty,nick
+    global spawntimer,game,score,writing,level,ask,difficulty,nick,multiplayer,rover,rover1
     if game:
         if not ask:
+            if nick=="null":
+                readme=g2d.confirm(message[0])
+                if readme:
+                    webbrowser.open("https://github.com/Kekko01/My-Moon-Patrol/blob/master/README.md")
             while nick=="null" or not nick:
-                nick=g2d.prompt("Insert your Nickname")
+                nick=g2d.prompt(message[1])
                 with open("assets/nick","w") as target:
                     target.write(nick)
                 with open("assets/nick","r") as target:
                     nick=target.read()
                     nick=nick.strip()
 
-            multiplayer=int(g2d.confirm("Multiplayer? (OK=yes, Cancel=no)"))
+            multiplayer=g2d.confirm(message[2])
             rover = Rover(arena, (60, 300), 1)
             if multiplayer:
                 rover1 = Rover(arena, (100, 300), 2)
@@ -113,10 +124,10 @@ def tick():
 
         if spawntimer==0:
             if random.randint(0,20)==0:
-                holes.append(Hole(arena, (131,167), (arena_w,300)))
+                holes.append(Hole(arena, (131,167), (ARENA_W,300)))
                 spawntimer=120
             elif random.randint(0,20)==0:
-                holes.append(Hole(arena, (159,167), (arena_w,300)))
+                holes.append(Hole(arena, (159,167), (ARENA_W,300)))
                 spawntimer=120
             elif random.randint(0,20)==0:
                 hills.append(Hill(arena,(80,203),(13,16),1))
@@ -165,7 +176,7 @@ def tick():
                         arena.remove(a)
                         score+=1
         for a in bullets:
-            if a.x_position()>arena_w:
+            if a.x_position()>ARENA_W:
                 bullets.remove(a)
                 arena.remove(a)
             if a.y_position()<0:
@@ -240,14 +251,14 @@ def tick():
         if not writing and score > int(highscore):
             with open("assets/score","w") as target:
                 target.write(str(score))
-            online=g2d.confirm("Would you like to update and view your score to the global online ranking?")
+            online=g2d.confirm(message[3])
             if online:
                 url="http://kekko01files.altervista.org/projects/moonpatrol_scores.php?nick="+str(nick)+"&score="+str(score)+"&version="+version
                 webbrowser.open(url)
             writing=True
         else:
             if ask:
-                online=g2d.confirm("Would you like view your score to the global online ranking?")
+                online=g2d.confirm(message[4])
                 if online:
                     url="http://kekko01files.altervista.org/projects/moonpatrol_scores.php"
                     webbrowser.open(url)
