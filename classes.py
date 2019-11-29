@@ -12,6 +12,7 @@ from actor import Actor, Arena
 class Rover(Actor):
     def __init__(self, arena, pos, player):
         self._x, self._y = pos
+        self._startx, self._starty = pos
         self._w, self._h = 31, 23
         self._player = player
         self._speed = 10
@@ -89,6 +90,10 @@ class Rover(Actor):
 
     def y_position(self):
         return self._y+self._h/2
+
+    def reset_position(self):
+        self._x = self._startx
+        self._y = self._starty
 
 class Background:
     """docstring for Background."""

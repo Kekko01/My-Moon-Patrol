@@ -28,7 +28,7 @@ Player 2:
 - DOWN = s
 - LEFT = a
 - RIGHT = f
-- SPARO = z
+- SPARO = c
 
 ------------
 
@@ -56,7 +56,7 @@ Giocatore 2:
 - SU = w
 - SINISTRA = a
 - DESTRA = f
-- SPARO = z
+- SPARO = c
 <br>
 
 ![Moon Patrol](https://i.imgur.com/ZHwgCmq.png "Moon Patrol")

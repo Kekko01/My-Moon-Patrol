@@ -87,3 +87,4 @@ class Arena():
         '''Return the size of the arena as a couple: (width, height)
         '''
         return (self._w, self._h)
+        

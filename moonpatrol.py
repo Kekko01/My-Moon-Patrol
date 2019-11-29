@@ -14,11 +14,12 @@ arena = Arena((ARENA_W, ARENA_H))
 #b1 = Ball(arena, (40, 80))
 #b2 = Ball(arena, (80, 40))
 #g = Ghost(arena, (120, 80))
-version="1.9"
+version="2.0"
 ask=False
 sound=g2d.load_audio("assets/sound.mp3")
 sprites = g2d.load_image("assets/moon-patrol.png")
 backgroundsimage=g2d.load_image("assets/moon-patrol-bg.png")
+startbackground=g2d.load_image("assets/splash.png")
 backgrounds=[Background((0,0),2,(0,0),(510,257)),Background((510,0),2,(0,0),(510,257)),Background((0,180),4,(0,384),(510,127)),Background((510,180),4,(0,384),(510,127)),Background((0,300),6,(0,515),(510,127)),Background((510,300),6,(0,515),(510,127))]
 holes=[]
 hills=[]
@@ -46,10 +47,13 @@ with open("assets/lang/"+langset,"r") as target:
 score=0
 level=1
 difficulty=30
+again=True
+reset_highscore=False
 def tick():
-    global spawntimer,game,score,writing,level,ask,difficulty,nick,multiplayer,rover,rover1
+    global spawntimer,game,score,writing,level,ask,difficulty,nick,multiplayer,rover,rover1,again,highscore,reset_highscore
     if game:
         if not ask:
+            g2d.draw_image(startbackground,(0,0))
             if nick=="null":
                 readme=g2d.confirm(message[0])
                 if readme:
@@ -108,7 +112,7 @@ def tick():
         if g2d.key_pressed("Spacebar"):
             bullets.append(Bullet(arena, rover.x_position(), rover.y_position(), 0))
             bullets.append(Bullet(arena, rover.x_position(), rover.y_position(), 1))
-        if g2d.key_pressed("z") and multiplayer:
+        if g2d.key_pressed("c") and multiplayer:
             bullets.append(Bullet(arena, rover1.x_position(), rover1.y_position(), 0))
             bullets.append(Bullet(arena, rover1.x_position(), rover1.y_position(), 1))
 
@@ -239,30 +243,71 @@ def tick():
 
     else:
         g2d.pause_audio(sound)
-        g2d.set_color((255,0,0))
-        g2d.draw_text("Game Over",(110,170),50)
-        g2d.draw_image_clip(sprites, rover.drop_symbol(), rover.position())
-        rover.drop()
-        rover.position()
-        if multiplayer:
-            g2d.draw_image_clip(sprites, rover1.drop_symbol(), rover1.position())
-            rover1.drop()
-            rover1.position()
-        if not writing and score > int(highscore):
-            with open("assets/score","w") as target:
-                target.write(str(score))
-            online=g2d.confirm(message[3])
-            if online:
-                url="http://kekko01files.altervista.org/projects/moonpatrol_scores.php?nick="+str(nick)+"&score="+str(score)+"&version="+version
-                webbrowser.open(url)
-            writing=True
+        if again:
+            again=g2d.confirm(message[5])
+            if again:
+                for i in bullets:
+                    bullets.remove(i)
+                    arena.remove(i)
+                for i in holes:
+                    holes.remove(i)
+                    arena.remove(i)
+                for i in hills:
+                    hills.remove(i)
+                    arena.remove(i)
+                for i in aliens:
+                    aliens.remove(i)
+                    arena.remove(i)
+                for i in aliensbullets:
+                    aliensbullets.remove(i)
+                    arena.remove(i)
+                for i in robots:
+                    robots.remove(i)
+                    arena.remove(i)
+                for i in robotsbullets:
+                    robotsbullets.remove(i)
+                    arena.remove(i)
+                spawntimer=0
+                level=1
+                difficulty=30
+                rover.reset_position()
+                if multiplayer:
+                    rover1.reset_position()
+                if int(highscore)<score:
+                    highscore=score
+                    str(highscore)
+                    reset_highscore=True
+                score=0
+                game=True
         else:
-            if ask:
-                online=g2d.confirm(message[4])
+            if int(highscore)<score:
+                highscore=score
+                str(highscore)
+                reset_highscore=True
+            g2d.set_color((255,0,0))
+            g2d.draw_text("Game Over",(110,170),50)
+            g2d.draw_image_clip(sprites, rover.drop_symbol(), rover.position())
+            rover.drop()
+            rover.position()
+            if multiplayer:
+                g2d.draw_image_clip(sprites, rover1.drop_symbol(), rover1.position())
+                rover1.drop()
+                rover1.position()
+            if not writing and reset_highscore:
+                with open("assets/score","w") as target:
+                    target.write(str(score))
+                online=g2d.confirm(message[3])
                 if online:
-                    url="http://kekko01files.altervista.org/projects/moonpatrol_scores.php"
+                    url="http://kekko01files.altervista.org/projects/moonpatrol_scores.php?nick="+str(nick)+"&score="+str(score)+"&version="+version
                     webbrowser.open(url)
-                ask=False
+                writing=True
+            else:
+                if ask:
+                    online=g2d.confirm(message[4])
+                    if online:
+                        url="http://kekko01files.altervista.org/projects/moonpatrol_scores.php"
+                        webbrowser.open(url)
+                    ask=False
     g2d.draw_text("Highscore:", (20, 20), 30)
     g2d.draw_text(highscore, (170, 10), 40)
     g2d.draw_text("Score:", (330, 20), 30)
