@@ -5,6 +5,7 @@
 @license This software is free - http://www.gnu.org/licenses/gpl.html
 '''
 
+
 import g2d as g2d, random, webbrowser
 from classes import Arena, Rover, Background, Hole, Hill, Bullet, Alien, AlienBullet, Robot, RobotBullet
 
@@ -41,9 +42,8 @@ with open("assets/lang/choice","r") as target:
     for line in target:
         langset = line.strip()
 message=[]
-with open("assets/lang/"+langset,"r") as target:
-    for text in target:
-        message.append(text.strip())
+with open(f"assets/lang/{langset}", "r") as target:
+    message.extend(text.strip() for text in target)
 score=0
 level=1
 difficulty=30
@@ -55,8 +55,7 @@ def tick():
         if not ask:
             g2d.draw_image(startbackground,(0,0))
             if nick=="null":
-                readme=g2d.confirm(message[0])
-                if readme:
+                if readme := g2d.confirm(message[0]):
                     webbrowser.open("https://github.com/Kekko01/My-Moon-Patrol/blob/master/README.md")
             while nick=="null" or not nick:
                 nick=g2d.prompt(message[1])
@@ -153,9 +152,8 @@ def tick():
                 holes.remove(a)
             if a.collide(rover):
                 game=False
-            if multiplayer:
-                if a.collide(rover1):
-                    game=False
+            if multiplayer and a.collide(rover1):
+                game=False
 
         for a in hills:
             if a.x_position()<=0:
@@ -163,22 +161,20 @@ def tick():
                 arena.remove(a)
             if a.collide(rover):
                 game=False
-            if multiplayer:
-                if a.collide(rover1):
-                    game=False
+            if multiplayer and a.collide(rover1):
+                game=False
             for i in bullets:
                 if a.collide(i):
                     if a.get_life()==2:
                         a.take_life()
                         bullets.remove(i)
                         arena.remove(i)
-                        score+=1
                     else:
                         bullets.remove(i)
                         hills.remove(a)
                         arena.remove(i)
                         arena.remove(a)
-                        score+=1
+                    score+=1
         for a in bullets:
             if a.x_position()>ARENA_W:
                 bullets.remove(a)
@@ -216,20 +212,17 @@ def tick():
                     score+=1
             if a.collide(rover):
                 game=False
-            if multiplayer:
-                if a.collide(rover1):
-                    game=False
+            if multiplayer and a.collide(rover1):
+                game=False
         for a in aliensbullets:
-            if a.y_position()>300:
-                if random.randint(0,5)==0:
-                    holes.append(Hole(arena, (131,167), (a.x_position(),300)))
-                    aliensbullets.remove(a)
-                    arena.remove(a)
+            if a.y_position() > 300 and random.randint(0, 5) == 0:
+                holes.append(Hole(arena, (131,167), (a.x_position(),300)))
+                aliensbullets.remove(a)
+                arena.remove(a)
             if a.collide(rover):
                 game=False
-            if multiplayer:
-                if a.collide(rover1):
-                    game=False
+            if multiplayer and a.collide(rover1):
+                game=False
 
         for a in robotsbullets:
             if a.y_position()<=0:
@@ -237,15 +230,13 @@ def tick():
                 arena.remove(a)
             if a.collide(rover):
                 game=False
-            if multiplayer:
-                if a.collide(rover1):
-                    game=False
+            if multiplayer and a.collide(rover1):
+                game=False
 
     else:
         g2d.pause_audio(sound)
         if again:
-            again=g2d.confirm(message[5])
-            if again:
+            if again := g2d.confirm(message[5]):
                 for i in bullets:
                     bullets.remove(i)
                     arena.remove(i)
@@ -296,18 +287,16 @@ def tick():
             if not writing and reset_highscore:
                 with open("assets/score","w") as target:
                     target.write(str(score))
-                online=g2d.confirm(message[3])
-                if online:
-                    url="http://kekko01files.altervista.org/projects/moonpatrol_scores.php?nick="+str(nick)+"&score="+str(score)+"&version="+version
+                if online := g2d.confirm(message[3]):
+                    url = f"http://kekko01files.altervista.org/projects/moonpatrol_scores.php?nick={str(nick)}&score={str(score)}&version={version}"
+
                     webbrowser.open(url)
                 writing=True
-            else:
-                if ask:
-                    online=g2d.confirm(message[4])
-                    if online:
-                        url="http://kekko01files.altervista.org/projects/moonpatrol_scores.php"
-                        webbrowser.open(url)
-                    ask=False
+            elif ask:
+                if online := g2d.confirm(message[4]):
+                    url="http://kekko01files.altervista.org/projects/moonpatrol_scores.php"
+                    webbrowser.open(url)
+                ask=False
     g2d.draw_text("Highscore:", (20, 20), 30)
     g2d.draw_text(highscore, (170, 10), 40)
     g2d.draw_text("Score:", (330, 20), 30)

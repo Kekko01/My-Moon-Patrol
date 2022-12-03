@@ -65,16 +65,24 @@ class Rover(Actor):
 
     def symbol(self):
         if self._player == 1:
-            if self._y + self._h <= self._ARENA_H - self._plane and self._dy < 0:
-                return 49, 150, self._w, self._h
-            elif self._y + self._h <= self._ARENA_H - self._plane and self._dy > 0 and self._y + self._h != self._ARENA_H - self._plane:
-                return 82 , 153 , self._w, self._h
+            if self._y + self._h <= self._ARENA_H - self._plane:
+                if self._dy < 0:
+                    return 49, 150, self._w, self._h
+                elif (
+                    self._dy > 0
+                    and self._y + self._h != self._ARENA_H - self._plane
+                ):
+                    return 82 , 153 , self._w, self._h
             return 249, 158, self._w, self._h
         elif self._player == 2:
-            if self._y + self._h <= self._ARENA_H - self._plane and self._dy < 0:
-                return 47, 103, self._w, self._h
-            elif self._y + self._h <= self._ARENA_H - self._plane and self._dy > 0 and self._y + self._h != self._ARENA_H - self._plane:
-                return 80 , 104 , self._w, self._h
+            if self._y + self._h <= self._ARENA_H - self._plane:
+                if self._dy < 0:
+                    return 47, 103, self._w, self._h
+                elif (
+                    self._dy > 0
+                    and self._y + self._h != self._ARENA_H - self._plane
+                ):
+                    return 80 , 104 , self._w, self._h
             return 212, 158, self._w, self._h
 
     def drop(self):
@@ -139,10 +147,7 @@ class Hole(Arena):
 
     def collide(self,other):
         x,y,w,h=other.position()
-        if x + w > self._x and y + h > self._y and x < self._x + self._w:
-            return True
-        else:
-            return False
+        return x + w > self._x and y + h > self._y and x < self._x + self._w
 
     def symbol(self):
         return self._image_x, self._image_y, self._w, self._h
@@ -171,15 +176,9 @@ class Hill(Arena):
     def collide(self,other):
         x,y,w,h=other.position()
         if isinstance(other,Rover):
-            if y + h >= self._y and self._x <= x + w and x< self._x + self._w:
-                return True
-            else:
-                return False
+            return y + h >= self._y and self._x <= x + w and x< self._x + self._w
         elif isinstance(other,Bullet):
-            if x + w >= self._x and y >= self._y :
-                return True
-            else:
-                return False
+            return x + w >= self._x and y >= self._y
 
     def symbol(self):
         return self._image_x, self._image_y, self._w, self._h
@@ -215,10 +214,7 @@ class Alien(Arena):
     def collide(self,other):
         x,y,w,h=other.position()
         if isinstance(other,Bullet):
-            if y + h <= self._y and self._x <= x <= self._x + self._w:
-                return True
-            else:
-                return False
+            return y + h <= self._y and self._x <= x <= self._x + self._w
 
     def symbol(self):
         return self._image_x, self._image_y, self._w, self._h
@@ -253,10 +249,7 @@ class AlienBullet(Arena):
     def collide(self,other):
         x,y,w,h=other.position()
         if isinstance(other,Rover):
-            if x<=self._x<=x+w and self._y+self._h>=y:
-                return True
-            else:
-                return False
+            return x<=self._x<=x+w and self._y+self._h>=y
 
     def symbol(self):
         return self._image_x, self._image_y, self._w, self._h
@@ -367,10 +360,7 @@ class RobotBullet(Arena):
     def collide(self,other):
         x,y,w,h=other.position()
         if isinstance(other,Rover):
-            if x<=self._x<=x+w and y+h>=self._y:
-                return True
-            else:
-                return False
+            return x<=self._x<=x+w and y+h>=self._y
 
     def symbol(self):
         return self._image_x, self._image_y, self._w, self._h
