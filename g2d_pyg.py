@@ -109,11 +109,11 @@ def web_key(key: int) -> str:
     word = pygame.key.name(key)
     word = word[0].upper() + word[1:]
     if len(word) == 1 and word.isalpha():
-        word = "Key" + word
+        word = f"Key{word}"
     elif len(word) == 1 and word.isdigit():
-        word = "Digit" + word
+        word = f"Digit{word}"
     elif word in ("Up", "Down", "Right", "Left"):
-        word = "Arrow" + word
+        word = f"Arrow{word}"
     elif word == "Space":
         word = "Spacebar"
     elif word == "Return":
